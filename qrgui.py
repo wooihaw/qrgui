@@ -12,20 +12,50 @@ input_layout = sg.Frame(
 )
 
 slider_layout = sg.Frame(
-    "Scale",
+    "Size Setting",
     [
         [
-            sg.Slider(
-                range=(1, 10),
-                default_value=5,
-                orientation="h",
-                key="-SLIDER-",
+            sg.Frame(
+                "Scale",
+                [
+                    [
+                        sg.Slider(
+                            range=(1, 10),
+                            default_value=5,
+                            orientation="h",
+                            key="-SCALE-",
+                            expand_x=True,
+                            tooltip="Scale of the QR code",
+                        )
+                    ]
+                ],
+                element_justification="center",
                 expand_x=True,
+                expand_y=True,
+            ),
+            sg.Frame(
+                "Quiet Zone",
+                [
+                    [
+                        sg.Slider(
+                            range=(0, 5),
+                            default_value=4,
+                            orientation="h",
+                            key="-QUIETZONE-",
+                            expand_x=True,
+                            tooltip="Quiet zone around the QR code",
+                        )
+                    ]
+                ],
+                element_justification="center",
+                expand_x=True,
+                expand_y=True,
             ),
         ]
     ],
     element_justification="center",
     expand_x=True,
+    expand_y=True,
 )
 
 color_layout = sg.Frame(
@@ -34,8 +64,8 @@ color_layout = sg.Frame(
         [
             sg.In(key="-FGCOLOR-", visible=False),
             sg.In(key="-BGCOLOR-", visible=False),
-            sg.ColorChooserButton("Foreground", target="-FGCOLOR-"),
-            sg.ColorChooserButton("Background", target="-BGCOLOR-"),
+            sg.ColorChooserButton("Foreground", target="-FGCOLOR-", tooltip="Foreground color"),
+            sg.ColorChooserButton("Background", target="-BGCOLOR-", tooltip="Background color"),
         ]
     ],
     element_justification="center",
@@ -45,9 +75,9 @@ color_layout = sg.Frame(
 button_layout = sg.Column(
     [
         [
-            sg.Button("Generate", size=(8,)),
-            sg.Button("Save", size=(8,), disabled=True),
-            sg.Button("Exit", size=(8,)),
+            sg.Button("Generate", size=(8,), tooltip="Generate QR code"),
+            sg.Button("Save", size=(8,), disabled=True, tooltip="Save QR code"),
+            sg.Button("Exit", size=(8,), tooltip="Exit application"),
         ]
     ],
     justification="center",
@@ -86,7 +116,8 @@ while True:
     if event == "Generate":
         try:
             data = values["-IN-"]
-            scale = int(values["-SLIDER-"])
+            scale = int(values["-SCALE-"])
+            quietzone = int(values["-QUIETZONE-"])
             if data:
                 print(data)
                 qr = pyqrcode.create(data)
@@ -99,7 +130,7 @@ while True:
                         scale=scale,
                         module_color=fgcolor,
                         background=bgcolor,
-                        quiet_zone=4,
+                        quiet_zone=quietzone,
                     )
                 )
                 window["Save"].update(disabled=False)
@@ -111,7 +142,8 @@ while True:
     # Save QR Code
     if event == "Save":
         try:
-            scale = int(values["-SLIDER-"])
+            scale = int(values["-SCALE-"])
+            quietzone = int(values["-QUIETZONE-"])
             filename = sg.popup_get_file(
                 "Save As",
                 save_as=True,
@@ -120,7 +152,13 @@ while True:
                 no_window=True,
             )
             if filename:
-                qr.png(filename, scale=scale, module_color=fgcolor, background=bgcolor)
+                qr.png(
+                    filename,
+                    scale=scale,
+                    module_color=fgcolor,
+                    background=bgcolor,
+                    quiet_zone=quietzone,
+                )
                 sg.popup("Saved", filename)
                 print(filename)
         except:
