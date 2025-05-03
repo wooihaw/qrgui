@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 import pyqrcode
 
 # Convert from color code to tuple of RGB values plus alpha

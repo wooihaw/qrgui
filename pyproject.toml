@@ -1,0 +1,11 @@
+[project]
+name = "qrgui"
+version = "0.1.0"
+description = "QRGUI - A Python GUI to create QR codes"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "freesimplegui>=5.2.0.post1",
+    "pypng>=0.20220715.0",
+    "pyqrcode>=1.2.1",
+]
